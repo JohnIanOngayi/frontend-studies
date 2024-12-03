@@ -1,54 +1,66 @@
-// function buttonClick(event) {
-// console.log(event.target.id);
-// console.log(event.target.classList);
-// alert("button clicked!");
-//
-var output = document.getElementById("output");
-var body = document.body;
-// output.innerHTML = "<h3>" + event.target.id + "</h3>";
-//
-// console.log(event.type);
-// console.log(event.clientX, event.clientY);
-// console.log(event.offsetX, event.offsetY);
-//   console.log(event.altKey);
-//   console.log(event.ctrlKey);
-//   console.log(event.altKey);
-// }
-//
-// var button = document
-//   .getElementById("button")
-//   .addEventListener("click", buttonClick);
-var itemInput = document.querySelector('input[type="text"]');
-var form = document.querySelector("form");
+var addForm = document.getElementById("addForm");
+var itemList = document.getElementById("items");
+var filter = document.getElementById("filter");
 
-function runEvent(event) {
-  console.log("Event Type:", event.type);
-  console.log(event.target.value);
-  // output.innerHTML =
-  //   "<h3>MouseX: " +
-  //   event.offsetX +
-  //   "</h3>" +
-  //   "<h3>MouseY: " +
-  //   event.offsetY +
-  //   "</h3>";
-  // body.style.backgroundColor =
-  //   "rgb(" +
-  //   event.offsetX +
-  //   "," +
-  //   event.offsetY +
-  //   "," +
-  //   eval((event.offsetX + event.offsetY) % 256) +
-  //   ")";
+//form submit event
+addForm.addEventListener("submit", addItem);
+
+// Delete event
+itemList.addEventListener("click", removeItem);
+
+//Filter event
+filter.addEventListener("keyup", filterItems);
+
+function addItem(event) {
+  event.preventDefault();
+
+  //Get input value
+  var newItem = document.getElementById("item").value;
+
+  //Create new li
+  var li = document.createElement("li");
+
+  //Add a class
+  li.className = "list-group-item";
+
+  //Add text node
+  if (newItem == "" || !newItem) return;
+  li.appendChild(document.createTextNode(newItem));
+
+  //Create delete button
+  var delBtn = document.createElement("button");
+  delBtn.innerText = "X";
+
+  li.appendChild(delBtn);
+
+  //Add classes to delBtn
+  delBtn.className = "btn btn-danger btn-sm float-right delete";
+
+  itemList.appendChild(li);
 }
 
-itemInput.addEventListener("keydown", runEvent);
-// var button = document.getElementById("button");
-// var boxdiv = document.getElementById("box");
+function removeItem(event) {
+  console.log(event.target);
+  if (event.target.classList.contains("delete")) {
+    if (confirm("Are you sure? ")) {
+      var li = event.target.parentElement;
+      itemList.removeChild(li);
+    }
+  }
+}
+function filterItems(event) {
+  var filterTxt = event.target.value.toLowerCase();
 
-// button.addEventListener("click", runEvent);
-// button.addEventListener("dblclick", runEvent);
-// button.addEventListener("mousedown", runEvent);
-// button.addEventListener("mouseup", runEvent);
-// boxdiv.addEventListener("mouseenter", runEvent);
-// boxdiv.addEventListener("mouseleave", runEvent);
-// boxdiv.addEventListener("mousemove", runEvent);
+  //Get all items
+  var items = itemList.getElementsByTagName("li");
+
+  //Convert to array
+  Array.from(items).forEach((item) => {
+    var itemName = item.firstChild.textContent;
+    if (itemName.toLowerCase().indexOf(filterTxt) != -1) {
+      item.style.display = "block";
+    } else {
+      item.style.display = "none";
+    }
+  });
+}
